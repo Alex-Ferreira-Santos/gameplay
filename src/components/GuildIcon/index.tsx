@@ -1,6 +1,5 @@
 import React from 'react';
 import {Image } from 'react-native';
-import {RectButton, RectButtonProps} from 'react-native-gesture-handler'
 import {styles} from './styles'
 
 export function GuildIcon(){

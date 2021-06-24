@@ -1,87 +1,110 @@
-import React from 'react'
-import {ImageBackground, Text, View, FlatList} from 'react-native'
-import {Fontisto} from '@expo/vector-icons'
-import {BorderlessButton} from 'react-native-gesture-handler'
-
-
+import React,{useState} from 'react'
+import {RectButton} from 'react-native-gesture-handler'
+import {Text, View,ScrollView, KeyboardAvoidingView, Platform} from 'react-native'
 import {Background} from '../../components/Background'
-import {ListHeader} from '../../components/ListHeader'
 import {Header} from '../../components/Header'
-import { Member } from '../../components/Member'
-import {ListDivider} from '../../components/ListDivider'
-import {ButtonIcon} from '../../components/ButtonIcon'
+import {GuildIcon} from '../../components/GuildIcon'
 import { theme } from '../../global/styles/theme'
-
-import BannerImg from '../../assets/banner.png'
-
 import {styles} from './styles'
-
+import {CategorySelect} from '../../components/categorySelect'
+import {Feather} from '@expo/vector-icons'
+import { SmallInput } from '../../components/SmallInput'
+import {TextArea} from '../../components/TextArea'
+import {Button} from '../../components/Button'
 
 export function AppointmentCreate(){
-    const members = [
-        {
-            id:'1', 
-            username: 'Alex',
-            avatar_url:'https://github.com/Alex-Ferreira-Santos.png',
-            status: 'online',
-        },
-        {
-            id:'2', 
-            username: 'Alex',
-            avatar_url:'https://github.com/Alex-Ferreira-Santos.png',
-            status: 'offline',
-        },
-        {
-            id:'3', 
-            username: 'Alex',
-            avatar_url:'https://github.com/Alex-Ferreira-Santos.png',
-            status: 'online',
-        }
-    ]
+    const [category,setCategory] = useState('')
     return (
-        <Background>
-            <Header 
-                title='Detalhes'
-                action={
-                    <BorderlessButton>
-                        <Fontisto
-                            name='share'
-                            size={24}
-                            color={theme.colors.primary}
-                        />
-                    </BorderlessButton>
-                }
-            />
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView>
+                <Background>
+                    <Header 
+                        title='Agendar Partida'
+                    />
+                    <Text style={[
+                        styles.label,
+                        {marginLeft:24, marginTop: 36, marginBottom: 18}]}
+                    >
+                        Categoria
+                    </Text>
 
-            <ImageBackground 
-                source={BannerImg}
-                style={styles.banner}
-            >
-                <View style={styles.bannerContent}>
-                    <Text style={styles.title}>Lendários</Text>
-                    <Text style={styles.title}>É hoje que vamos chegar ao challenger sem perder uma partida da md10</Text>  
-                </View>
-                
-            </ImageBackground>
+                    <CategorySelect 
+                        hasCheckBox 
+                        setCategory={setCategory}
+                        categorySelected={category}
+                    />
 
-            <ListHeader
-                title='Jogadores'
-                subtitle='Total 3'
-            />
+                    <View style={styles.form}>
+                        <RectButton>
+                            <View style={styles.select}>
+                            {
+                                /*<View style={styles.image}/>*/
+                                <GuildIcon/>
+                            }
+                                
 
-            <FlatList
-                data={members}
-                keyExtractor={ item => item.id}
-                renderItem={({item}) => (
-                    <Member data={item}/>
-                )}
-                ItemSeparatorComponent={ () => <ListDivider/>}
-                style={ styles.members}
-            />
-            <View style={ styles.footer}>
-                <ButtonIcon title='Entrar na partida'/>
-            </View>
-            
-        </Background>
+                                <View style={styles.selectBody}>
+                                    <Text style={styles.label}>Selecione um servidor</Text>
+                                </View>
+
+                                <Feather
+                                    name='chevron-right'
+                                    color={theme.colors.heading}
+                                    size={18}
+                                />
+
+                            </View>  
+                        </RectButton>
+                        
+
+                        <View style={styles.field}>
+                            <View>
+                                <Text style={styles.label}>Dia e mês</Text>
+
+                                <View style={styles.column}>
+                                    <SmallInput maxLength={2}/>
+                                    <Text style={styles.divider}>/</Text>
+                                    <SmallInput maxLength={2}/>
+                                </View>  
+                            </View>
+
+                            <View>
+                                <Text style={styles.label}>Hora e minuto</Text>
+
+                                <View style={styles.column}>
+                                    <SmallInput maxLength={2}/>
+                                    <Text style={styles.divider}>:</Text>
+                                    <SmallInput maxLength={2}/>
+                                </View>  
+                            </View> 
+        
+                        </View>
+                        
+                        <View style={[styles.field,{marginBottom: 12}]}>
+                            <Text style={styles.label}>Descrição</Text>
+
+                            <Text style={styles.caracteresLimit}>Max 100 caracteres</Text>
+                        </View>
+
+                        <TextArea 
+                            multiline
+                            maxLength={100}
+                            numberOfLines={5}
+                            autoCorrect={false}
+                        /> 
+
+                        <View style={styles.footer}>
+                            <Button title='Agendar'/>
+                        </View>
+                        
+                        
+                    </View>
+                    
+                </Background>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }

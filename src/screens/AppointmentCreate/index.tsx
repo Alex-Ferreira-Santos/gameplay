@@ -11,9 +11,24 @@ import {Feather} from '@expo/vector-icons'
 import { SmallInput } from '../../components/SmallInput'
 import {TextArea} from '../../components/TextArea'
 import {Button} from '../../components/Button'
+import {ModalView} from '../../components/ModalView'
+import {Guilds} from '../Guilds'
+import { GuildProps } from '../../components/Guild'
 
 export function AppointmentCreate(){
     const [category,setCategory] = useState('')
+    const [openGuildsModal,setOpenGuildsModal] = useState(false)
+    const [guild, setGuild] = useState<GuildProps>({} as GuildProps)
+
+    function handleOpenGuilds(){     
+        setOpenGuildsModal(true)
+    }
+
+    function handleGuildSelect(guildSelect: GuildProps){
+        setGuild(guildSelect)
+        setOpenGuildsModal(false)
+    }
+
     return (
         <KeyboardAvoidingView 
             style={styles.container}
@@ -38,16 +53,23 @@ export function AppointmentCreate(){
                     />
 
                     <View style={styles.form}>
-                        <RectButton>
+                        <RectButton onPress={handleOpenGuilds}>
                             <View style={styles.select}>
                             {
-                                /*<View style={styles.image}/>*/
-                                <GuildIcon/>
+                                guild.icon ? <GuildIcon/> :
+                                <View style={styles.image}/>
+                                
                             }
                                 
 
                                 <View style={styles.selectBody}>
-                                    <Text style={styles.label}>Selecione um servidor</Text>
+                                    <Text style={styles.label}>
+                                        {
+                                            guild.name 
+                                            ? guild.name 
+                                            : 'Selecione um servidor'
+                                        }
+                                    </Text>
                                 </View>
 
                                 <Feather
@@ -105,6 +127,9 @@ export function AppointmentCreate(){
                     
                 </Background>
             </ScrollView>
+            <ModalView visible={openGuildsModal}>
+                <Guilds handleGuildSelect={handleGuildSelect} />
+            </ModalView>
         </KeyboardAvoidingView>
     )
 }

@@ -1,10 +1,22 @@
 import React from 'react';
-import {Image } from 'react-native';
+import {Image,View } from 'react-native';
 import {styles} from './styles'
+import DiscordSvg from '../../assets/discord.svg'
 
-export function GuildIcon(){
+const {CDN_IMAGE} = process.env
 
+type Props = {
+    guildId: string;
+    iconId: string;
+}
+
+export function GuildIcon({guildId,iconId}:Props){
+    const uri = `${CDN_IMAGE}/icons/${guildId}/${iconId}.png`
     return(
-        <Image source={{uri:'https://gizmodo.uol.com.br/wp-content/blogs.dir/8/files/2020/04/discord-logo-1000x563.jpg'}} style={styles.image} resizeMode='cover'/>
+        <View style={styles.container}>
+        { iconId ?  
+            <Image source={{uri}} style={styles.image} resizeMode='cover'/> 
+            : <DiscordSvg width={40} height={40}/>}
+        </View>
     )
 }

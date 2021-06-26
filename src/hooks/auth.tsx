@@ -1,5 +1,6 @@
-import React,{createContext,ReactNode,useContext,useState} from "react";
+import React,{createContext,ReactNode,useContext,useState, useEffect} from "react";
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as AuthSession from 'expo-auth-session';
 
     const {SCOPE} = process.env
@@ -9,6 +10,7 @@ import * as AuthSession from 'expo-auth-session';
     const {RESPONSE_TYPE} = process.env
 
 import { api } from "../services/api";
+import {COLLECTION_USER} from '../config/database'
 
 type User = {
     id:string
@@ -60,11 +62,14 @@ function AuthProvider({children}: AuthProviderProps){
                 const firstName = userInfo.data.username.split(' ')[0]
                 userInfo.data.avatar = `${CDN_IMAGE}/avatars/${userInfo.data.id}/${userInfo.data.avatar}.png`
                 
-                setUser({
+                const userData = {
                     ...userInfo.data,
                     firstName,
                     token: params.access_token
-                })
+                }
+
+                await AsyncStorage.setItem(COLLECTION_USER,JSON.stringify(userData))
+                setUser(userData)
             }}
         catch(err){
             throw new Error('Não foi possivel autenticar')
@@ -72,6 +77,21 @@ function AuthProvider({children}: AuthProviderProps){
             setLoading(false)
         }
     }
+
+    async function loadUserStorageData(){
+        const storage = await AsyncStorage.getItem(COLLECTION_USER)
+
+        if(storage){
+            const userLogged = JSON.parse(storage) as User
+            api.defaults.headers.authorization = `Bearer ${userLogged.token}`
+
+            setUser(userLogged)
+        }
+    }
+
+    useEffect( () => {
+        loadUserStorageData()
+    },[])
 
     return(
         <AuthContext.Provider
